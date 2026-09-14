@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ma Section</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#202638;font-family:Arial,sans-serif}
+header{background:linear-gradient(135deg,#315eea,#7652e8);color:#fff;padding:28px 18px;border-radius:0 0 26px 26px}
+.wrap{max-width:920px;margin:auto;padding:0 14px}.top{display:flex;align-items:center;gap:14px}
+.logo{width:64px;height:64px;border-radius:17px;background:#fff;display:grid;place-items:center;font-size:31px;box-shadow:0 8px 22px #17235b40}
+h1{font-size:27px;margin:0}.sub{margin-top:4px;opacity:.9}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}button{border:0;border-radius:13px;padding:13px 15px;font-size:15px;font-weight:800}
+.add{background:#fff;color:#315eea}.noteBtn{background:#ffe56b;color:#554900}
+h2{font-size:20px;margin:24px 0 11px}.columns{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.col{background:#fff;border-radius:18px;padding:13px;min-height:140px;box-shadow:0 6px 22px #25304a12;border-top:5px solid}
+.c1{border-color:#ef4f8c}.c2{border-color:#4c7df0}.c3{border-color:#8759e8}
+.col h3{margin:0 0 8px;font-size:16px}.empty{font-size:13px;color:#8790a3;padding:14px 2px}
+.item{border:1px solid #e5e8ef;border-radius:13px;padding:11px;margin:8px 0;background:#fcfdff}.line{display:flex;gap:9px}.check{width:20px;height:20px;margin-top:2px}.grow{flex:1}.title{font-weight:800}.meta{font-size:12px;color:#788196;margin-top:5px}.pill{display:inline-block;margin-top:7px;padding:4px 8px;border-radius:99px;font-size:10px;font-weight:900}.low{background:#e5f7ed;color:#197246}.medium{background:#fff1cb;color:#916000}.high{background:#ffe4cc;color:#9a4d00}.urgent{background:#ffd8d6;color:#a31e19}.tools{display:flex;gap:6px;margin-top:8px}.mini{padding:7px 9px;font-size:11px;background:#edf1f7}.cal{background:#e8efff;color:#3158bd}.del{background:#ffe9e9;color:#a32424}
+.notes{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.cardnote{padding:16px;border-radius:17px;background:#fff5ad;min-height:120px;box-shadow:0 6px 20px #25304a12}.cardnote:nth-child(2n){background:#e7f3ff}.cardnote:nth-child(3n){background:#f1e7ff}.cardnote h3{margin:0 0 8px}.pdf{font-size:12px;margin-top:8px;font-weight:700}.small{font-size:12px;color:#7b8498}
+.modal{display:none;position:fixed;inset:0;background:#15203a88;align-items:center;justify-content:center;padding:14px;z-index:5}.modal.open{display:flex}.box{width:min(510px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:21px;padding:20px}.box h2{margin:0 0 12px}label{display:block;font-size:13px;font-weight:800;margin:12px 0 5px}input,select,textarea{width:100%;padding:11px;border:1px solid #d5dae4;border-radius:10px;font:inherit}textarea{min-height:90px}.modalActions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.cancel{background:#edf0f5}.save{background:#315eea;color:#fff}
+@media(max-width:700px){.columns{grid-template-columns:1fr}.notes{grid-template-columns:1fr}.actions{grid-template-columns:1fr}h1{font-size:24px}}
+</style></head><body>
+<header><div class="wrap"><div class="top"><div class="logo">📅</div><div><h1>Ma Section</h1><div class="sub">Tâches & Notes</div></div></div>
+<div class="actions"><button class="add" onclick="openTask()">➕ Ajouter une tâche</button><button class="noteBtn" onclick="openNote()">📝 Ajouter une note</button></div></div></header>
+<main class="wrap"><h2>📋 Mes tâches <span id="count" class="small"></span></h2>
+<div class="columns"><section class="col c1"><h3>🌞 Aujourd'hui / Demain</h3><div id="today"></div></section><section class="col c2"><h3>🗓️ Cette semaine</h3><div id="week"></div></section><section class="col c3"><h3>📅 Ce mois</h3><div id="month"></div></section></div>
+<h2>💡 Mes notes <span id="ncount" class="small"> · Appuie sur une note pour la lire</span></h2><div class="notes" id="notes"></div></main>
+
+<div id="taskModal" class="modal"><div class="box"><h2>➕ Nouvelle tâche</h2>
+<label>Que dois-tu faire ?</label><input id="tt" placeholder="Ex. Transmettre le compte rendu">
+<label>Pour quand ?</label><input id="td" type="date">
+<label>Urgence</label><select id="tu"><option value="low">🟢 Pas urgente</option><option value="medium">🟡 À surveiller</option><option value="high">🟠 Importante</option><option value="urgent">🔴 Urgente</option></select>
+<label>Rappel (facultatif)</label><input id="tr" type="datetime-local">
+<div class="modalActions"><button class="cancel" onclick="closeAll()">Annuler</button><button class="save" onclick="addTask()">Enregistrer</button></div></div></div>
+
+<div id="noteModal" class="modal"><div class="box"><h2>📝 Nouvelle note</h2>
+<label>Titre</label><input id="nt" placeholder="Ex. À retenir">
+<label>Note</label><textarea id="nx" placeholder="Écris ta note ici..."></textarea>
+<label>Rappel (facultatif)</label><input id="nr" type="datetime-local">
+<label>Ajouter un ou plusieurs PDF</label><input id="np" type="file" accept=".pdf,application/pdf" multiple>
+<div class="small">Les noms des PDF sont conservés avec la note.</div>
+<div class="modalActions"><button class="cancel" onclick="closeAll()">Annuler</button><button class="save" onclick="addNote()">Enregistrer</button></div></div></div>
+
+<script>
+const KEY='ma_section_v2';let db;
+try{db=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){db=null}
+if(!db||!Array.isArray(db.tasks)||!Array.isArray(db.notes))db={tasks:[],notes:[]};
+function persist(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+function esc(x){return String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c])}
+function day(s){return new Date(s+'T12:00:00')}
+function today(){let d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
+function monday(d){let x=new Date(d),n=(x.getDay()+6)%7;x.setDate(x.getDate()-n);x.setHours(0,0,0,0);return x}
+function group(s){let d=day(s),t=today(),tom=new Date(t);tom.setDate(tom.getDate()+1);if(d<=tom)return'today';let m=monday(t),e=new Date(m);e.setDate(e.getDate()+7);if(d<e)return'week';return'month'}
+const urg={low:'🟢 Pas urgente',medium:'🟡 À surveiller',high:'🟠 Importante',urgent:'🔴 Urgente'};
+function task(t){return '<div class="item"><div class="line"><input class="check" type="checkbox" '+(t.done?'checked':'')+' onchange="toggle('+t.id+')"><div class="grow"><div class="title">'+esc(t.title)+'</div><div class="meta">📅 '+day(t.date).toLocaleDateString('fr-FR')+'</div><span class="pill '+t.urg+'">'+urg[t.urg]+'</span>'+(t.reminder?'<div class="meta">🔔 '+new Date(t.reminder).toLocaleString('fr-FR')+'</div>':'')+'<div class="tools"><button class="mini cal" onclick="gcal('+t.id+')">📆 Google Agenda</button><button class="mini del" onclick="removeTask('+t.id+')">🗑️</button></div></div></div></div>'}
+
+function resetNoteForm(){document.getElementById('nt').value='';document.getElementById('nx').value='';document.getElementById('nr').value='';document.getElementById('np').value=''}
+function openNoteView(id){
+ let n=db.notes.find(x=>x.id===id);if(!n)return;
+ alert((n.title||'Note')+'\n\n'+(n.text||'')+(n.reminder?'\n\n🔔 Rappel : '+new Date(n.reminder).toLocaleString('fr-FR'):''));
+}
+function openPdf(noteId,index){
+ let n=db.notes.find(x=>x.id===noteId),p=n&&n.pdfs&&n.pdfs[index];if(!p)return;
+ if(typeof p==='string'){alert('Ce PDF provient d’une ancienne version et n’est pas stocké dans le navigateur.');return;}
+ let w=window.open();if(!w){alert('Autorise les fenêtres pop-up pour ouvrir le PDF.');return;}
+ w.document.write('<title>'+esc(p.name)+'</title><iframe src="'+p.data+'" style="position:fixed;inset:0;width:100%;height:100%;border:0"></iframe>');
+}
+function render(){let g={today:[],week:[],month:[]};db.tasks.forEach(t=>g[group(t.date)].push(t));for(let k of Object.keys(g)){g[k].sort((a,b)=>a.date.localeCompare(b.date));document.getElementById(k).innerHTML=g[k].length?g[k].map(task).join(''):'<div class="empty">Rien à faire ici 🎉</div>'}document.getElementById('count').textContent=db.tasks.filter(t=>!t.done).length+' à faire';document.getElementById('ncount').textContent=db.notes.length+' note'+(db.notes.length>1?'s':'');document.getElementById('notes').innerHTML=db.notes.length?db.notes.map(n=>'<article class="cardnote" onclick="openNoteView(${n.id})" style="cursor:pointer"><h3>'+esc(n.title)+'</h3><div>'+esc(n.text).replace(/\\n/g,'<br>')+'</div>'+(n.reminder?'<div class="meta">🔔 '+new Date(n.reminder).toLocaleString('fr-FR')+'</div>':'')+(n.pdfs||[]).map((p,i)=>'<button class="mini cal" onclick="event.stopPropagation();openPdf('+n.id+','+i+')">📄 '+esc(p.name||p)+'</button>').join(' ')+'<div class="tools"><button class="mini del" onclick="removeNote('+n.id+')">🗑️ Supprimer</button></div></article>').join(''):'<div class="empty">Aucune note pour le moment 😊</div>'}
+function openTask(){document.getElementById('td').value=new Date().toISOString().slice(0,10);document.getElementById('taskModal').classList.add('open');document.getElementById('tt').focus()}
+function openNote(){document.getElementById('noteModal').classList.add('open');document.getElementById('nt').focus()}
+function closeAll(){document.querySelectorAll('.modal').forEach(m=>m.classList.remove('open'))}
+function addTask(){let title=document.getElementById('tt').value.trim();if(!title)return alert('Indique le nom de la tâche 🙂');db.tasks.push({id:Date.now(),title,date:document.getElementById('td').value,urg:document.getElementById('tu').value,reminder:document.getElementById('tr').value,done:false});persist();closeAll();document.getElementById('tt').value='';document.getElementById('tr').value=''}
+function addNote(){let title=document.getElementById('nt').value.trim()||'Note',text=document.getElementById('nx').value,files=[...document.getElementById('np').files];
+if(files.length>0){
+ let readers=files.map(f=>new Promise(resolve=>{let r=new FileReader();r.onload=()=>resolve({name:f.name,data:r.result});r.readAsDataURL(f)}));
+ Promise.all(readers).then(pdfs=>{db.notes.unshift({id:Date.now(),title,text,reminder:document.getElementById('nr').value,pdfs});persist();closeAll();resetNoteForm();});
+ return;
+}
+db.notes.unshift({id:Date.now(),title,text,reminder:document.getElementById('nr').value,pdfs:[]});persist();closeAll();resetNoteForm();document.getElementById('nt').value='';document.getElementById('nx').value='';document.getElementById('nr').value='';document.getElementById('np').value=''}
+function toggle(id){let t=db.tasks.find(x=>x.id===id);if(t)t.done=!t.done;persist()}
+function removeTask(id){if(confirm('Supprimer cette tâche ?')){db.tasks=db.tasks.filter(x=>x.id!==id);persist()}}
+function removeNote(id){if(confirm('Supprimer cette note ?')){db.notes=db.notes.filter(x=>x.id!==id);persist()}}
+function gcal(id){let t=db.tasks.find(x=>x.id===id);if(!t)return;let d=t.date.replaceAll('-',''),e=new Date(day(t.date));e.setDate(e.getDate()+1);let end=e.toISOString().slice(0,10).replaceAll('-','');let u='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(t.title)+'&dates='+d+'/'+end+'&details='+encodeURIComponent('Urgence : '+urg[t.urg]);window.open(u,'_blank')}
+render();
+</script>
+<style>
+#installBtn{display:none;position:fixed;right:16px;bottom:16px;z-index:10;background:#202638;color:#fff;border:0;border-radius:16px;padding:13px 16px;font-weight:800;box-shadow:0 10px 28px #0003}
+.pwaTip{position:fixed;left:14px;right:14px;bottom:14px;z-index:9;background:#fff;border:1px solid #e5e8ef;border-radius:16px;padding:14px;box-shadow:0 10px 30px #0002;display:none}
+</style>
+<button id="installBtn">📅 Installer Ma Section</button>
+<script>
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('installBtn').style.display='block'});
+document.getElementById('installBtn').onclick=async()=>{
+ if(!deferredPrompt)return;
+ deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null;
+ document.getElementById('installBtn').style.display='none';
+};
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+
+async function demanderNotifications(){
+ if(!('Notification' in window)) return false;
+ if(Notification.permission==='granted') return true;
+ if(Notification.permission==='default') return (await Notification.requestPermission())==='granted';
+ return false;
+}
+function notificationTest(){
+ demanderNotifications().then(ok=>{if(ok)new Notification('📋 Ma Section',{body:'Les notifications sont activées.'})});
+}
+</script>
+</body></html>
